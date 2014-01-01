@@ -1,0 +1,40 @@
+---
+layout: post
+title: "2013 in Review"
+date: 2013-12-31 11:27:05 -0500
+comments: true
+categories: Personal
+description: "2013 in Review"
+---
+
+Today is December 31st, and I decided to write up a blog post, reflecting on the year that I've had. I've learned a lot over the last twelve months, and done a lot of interesting things (okay, at least interesting to me). Here's a brief overview of what happened:
+
+{% google_plus https://plus.google.com/114052868601022948953/posts/ZzXcKVs2fvH %}
+
+<!-- more -->
+
+##Looking Back
+
+- **January 17th**: Released the first version of my [Hacker News](https://play.google.com/store/apps/details?id=com.evans.hackernews) app to the Play Store. It was one of my first Android releases in a long while, and my first using the "Holo" design language that came about in Android 4.0+. It was met with a surprising amount of positivity when I [posted it on Hacker News](https://news.ycombinator.com/item?id=5072757), and has a 4.1 rating as of this post. I am actually in the process of rewriting this app, using a lot of the techniques I learned in the past 12 months. 
+
+- **February**: In February I was invited to take part in the [Glass Foundry](http://www.michaelevans.org/blog/2013/02/20/googles-project-glass/), a hackathon for Google Glass. I was one of the first non-Googlers to get my hands on it, and the team I was on won! Our prize was a Google Glass, free of charge. We built a recipes app for Glass, which would allow for hands-free cooking.
+
+- **April**: April was a pretty exciting month for me, I quit my job as a developer at The Washington Post, and started a new one as a developer at LivingSocial. I also traveled to New York City, in order to be one of the first people to pick up [Google Glass](http://www.michaelevans.org/blog/2013/04/29/hands-on-with-google-glass/). 
+
+- **May**: In May, I was fortunate enough to attend my third Google I/O. If you know anything about Google I/O, you'd know that statement alone is enough.
+
+- **August**: After returning from Defcon 21, I posted [a pair](http://www.michaelevans.org/blog/2013/08/14/tutorial-building-an-android-to-do-list-app-using-parse/) of [Android development tutorials](http://www.michaelevans.org/blog/2013/08/20/parse-android-todo-app-tutorial-part-two-users/) on how to make a Todo application using Parse. These have been two of my most popular posts to date, and I'll definitely be working on more in the future. If you enjoyed those posts, feel free to let me know what other topics you'd like to see covered!
+
+- **September**: After a bit of a hiatus from Android app development, I released an app called [Bike Finder](https://play.google.com/store/apps/details?id=org.michaelevans.bikefinder). This app is for locating bikes for use with Capital Bikeshare in Washington DC, with support for CityBikes and Divvy (among others) soon.
+
+- **October**: Another hackathon attempt, this time without success; Ed, Jon and I built an app for BattleHack called Tappd, which was designed to be a point-of-sale replacement, where users could tap-to-pay, as well as recieve push notifications for events such as their table being ready. 
+
+- **November**: I signed up and was chosen to be one of the [pioneer providers](https://helpouts.google.com/114052868601022948953/ls/a65184ab017ae8b0) for Google Helpouts, a program designed to help people in real time, using Google Hangouts. I set up a helpout to teach software development, and have had a few dozen [successful sessions](http://blog.votanoticias.com/app-de-meneame-para-google-glass/) so far. 
+
+- **December**: Most recently I released my first open source library for Android: [ColorArt](https://github.com/MichaelEvans/ColorArt). It ended up being very popular, making it onto [Android Weekly](http://androidweekly.net/issues/issue-81), and being the top Java repo for a week on GitHub. And even more exciting was the release of a project I had been working on for 3 months: a complete rewrite of the [LivingSocial app for Android](https://play.google.com/store/apps/details?id=com.livingsocial.www). It was a big update for us, and even got featured on one of my favorite Android news sites: [Android Police](http://www.androidpolice.com/2013/12/10/livingsocial-hits-v2-0-gets-a-complete-redesign-and-deal-searching/). 
+
+###Going Forward
+
+For 2014, I'd really like to contribute more to open source. Much of the work I do takes advantage of the work that others have open sourced, and I really find contributing back rewarding. I'd also like to do more writing on this blog, with both personal posts, as well as more tips and tutorials. 
+
+Overall, 2013 was a pretty eventful year. Here's to 2014 being even better. Happy New Year everyone!
