@@ -4,7 +4,7 @@
   <title><![CDATA[Gadget Habit]]></title>
   <link href="http://michaelevans.org/atom.xml" rel="self"/>
   <link href="http://michaelevans.org/"/>
-  <updated>2014-03-03T22:34:45-05:00</updated>
+  <updated>2014-04-13T12:21:04-04:00</updated>
   <id>http://michaelevans.org/</id>
   <author>
     <name><![CDATA[Michael Evans]]></name>
@@ -12,6 +12,45 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Embedding Google+ Posts in Octopress]]></title>
+    <link href="http://michaelevans.org/blog/2014/04/13/embedding-google-plus-posts-in-octopress/"/>
+    <updated>2014-04-13T13:46:25-04:00</updated>
+    <id>http://michaelevans.org/blog/2014/04/13/embedding-google-plus-posts-in-octopress</id>
+    <content type="html"><![CDATA[<p>A few months back I wrote a blog post about my <a href="http://www.michaelevans.org/blog/2013/12/31/2013-in-review/">2013 in Review</a>. One thing I wanted to add to the post was a link to the #AutoAwesomed video, which was generated from photos and videos I took during the year, which were backed up to Google+.</p>
+
+<p>Fortunately for me, Google allows you to embed posts into your pages using a technique which is documented <a href="https://developers.google.com/+/web/embedded-post/">here</a>. The problem with this method, for me at least, is that my blog is created using <a href="http://octopress.org/">Octopress</a>, and posts are written in Markdown and then rendered to HTML. Octopress does, however, allow you to write plugins which can help us with this issue.</p>
+
+<p>Here&rsquo;s the <a href="https://gist.github.com/MichaelEvans/10590514">plugin</a> in all it&rsquo;s glory:</p>
+
+<div><script src='https://gist.github.com/10590514.js?file=google_plus.rb'></script>
+<noscript><pre><code>module Jekyll
+
+  class GooglePlusEmbedTag &lt; Liquid::Tag
+    @post = nil
+    @height = &#39;&#39;
+    @width = &#39;&#39;
+
+    def initialize(tag_name, markup, tokens)
+      if markup =~ /(https:\/\/plus.google.com\/\d+\/posts\/\w+)/i
+        @url  = $1
+      end
+      super
+    end
+
+    def render(context)
+      &quot;&lt;div align=&#39;center&#39;&gt;&lt;div class=&#39;g-post&#39; data-href=&#39;#{@url}&#39;&gt;&lt;/div&gt;&lt;/div&gt;&quot;
+    end
+  end
+end
+
+Liquid::Template.register_tag(&#39;google_plus&#39;, Jekyll::GooglePlusEmbedTag)</code></pre></noscript></div>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[ADB over WiFi]]></title>
@@ -1714,47 +1753,6 @@ You will then receive an email from HTCDev with a link to the second    part of 
 <p>It&rsquo;s probably best to copy that backup folder off your SD card and onto your computer in the event something happens to your SD card.</p>
 
 <p><strong>Awesome</strong>! You&rsquo;re now all set to do all sorts of things, like installing custom roms. Be sure to check back for the next part of this series, where we will go over that.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[VMware 'Easy Install' stuck on Ubuntu 12.04]]></title>
-    <link href="http://michaelevans.org/blog/2012/12/20/vmware-easy-install-stuck-on-ubuntu-12-dot-04/"/>
-    <updated>2012-12-20T19:34:00-05:00</updated>
-    <id>http://michaelevans.org/blog/2012/12/20/vmware-easy-install-stuck-on-ubuntu-12-dot-04</id>
-    <content type="html"><![CDATA[<p>I was trying to install Ubuntu 12.04 in VMware Player on my PC and ran into some trouble during the &ldquo;Easy Install&rdquo; process. The installation basically hung at the console after the installation was successful, with a message telling me that the VMware Tools were being installed, and that I could login and use the system while they were installing. Maybe 10 minutes later, there was no progress, so I restarted the VM.</p>
-
-<p>I decided to log in and start X manually, so I could at least mess around with it in the meanwhile. Without being able to resize the window/use the shared clipboard, I decided to try to install the tools manually. No dice here, since VMware won&rsquo;t let you install the tools while the Easy Install process is still running. Here&rsquo;s what you can do to fix it:</p>
-
-<!--more-->
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo mv /etc/issue.backup /etc/issue
-</span><span class='line'>sudo mv /etc/rc.local.backup /etc/rc.local
-</span><span class='line'>sudo mv /opt/vmware-tools-installer/lightdm.conf /etc/init
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Then follow these few steps to stop the easy install process:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Power off the virtual machine.
-</span><span class='line'>Go to VM > Settings
-</span><span class='line'>Select Floppy.
-</span><span class='line'>Select 'Use physical drive', and set the dropdown to 'Auto Detect'.
-</span><span class='line'>Power on the virtual machine and install VMware Tools.</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Hope this helps!</p>
 ]]></content>
   </entry>
   
