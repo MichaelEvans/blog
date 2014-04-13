@@ -14,16 +14,6 @@ module Jekyll
 
     def render(context)
       "<div align='center'><div class='g-post' data-href='#{@url}'></div></div>"
-      # if @video.size > 0
-      #   video =  "<video width='#{@width}' height='#{@height}' preload='none' controls poster='#{@poster}'>"
-      #   @video.each do |v|
-      #     t = v.match(/([^\.]+)$/)[1]
-      #     video += "<source src='#{v}' #{type[t]}>"
-      #   end
-      #   video += "</video>"
-      # else
-      #   "Error processing input, expected syntax: {% video url/to/video [url/to/video] [url/to/video] [width height] [url/to/poster] %}"
-      # end
     end
   end
 end
