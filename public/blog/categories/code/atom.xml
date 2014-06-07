@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Code | Gadget Habit]]></title>
   <link href="http://michaelevans.org/blog/categories/code/atom.xml" rel="self"/>
   <link href="http://michaelevans.org/"/>
-  <updated>2014-04-13T12:21:41-04:00</updated>
+  <updated>2014-06-07T14:55:31-04:00</updated>
   <id>http://michaelevans.org/</id>
   <author>
     <name><![CDATA[Michael Evans]]></name>
@@ -20,7 +20,7 @@
     <id>http://michaelevans.org/blog/2013/12/12/colorart-a-library-to-do-itunes-11-style-color-matching-for-android</id>
     <content type="html"><![CDATA[<p>Last week I open sourced an Android library called <a href="https://github.com/MichaelEvans/ColorArt">ColorArt</a>, which is a port of the popular OS X library written by the guys over at <a href="http://www.panic.com/blog/itunes-11-and-colors/">Panic</a>. It allows you to use a source image to create a themed image/text display, very similar to the effect which is done in iTunes 11.</p>
 
-<p>{% img center /images/2013/12/12/itunes-11.png 600 600 iTunes Example %}</p>
+<p><img class="center" src="/images/2013/12/12/itunes-11.png" width="600" height="600" title="iTunes Example" ></p>
 
 <!-- more -->
 
@@ -51,7 +51,7 @@ colorArt.getDetailColor()
 
 <p>Voilà! Now you can make cool themed image/text display using Bitmaps as part of your application.</p>
 
-<p>{% img center /images/2013/12/12/sample.png 300 300 Sample %}</p>
+<p><img class="center" src="/images/2013/12/12/sample.png" width="300" height="300" title="Sample" ></p>
 
 <h3>Bonus: FadingImageView</h3>
 
