@@ -4,7 +4,7 @@
   <title><![CDATA[Gadget Habit]]></title>
   <link href="http://michaelevans.org/atom.xml" rel="self"/>
   <link href="http://michaelevans.org/"/>
-  <updated>2014-06-15T14:13:19-04:00</updated>
+  <updated>2014-07-09T23:46:20-04:00</updated>
   <id>http://michaelevans.org/</id>
   <author>
     <name><![CDATA[Michael Evans]]></name>
@@ -12,6 +12,41 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Blurred background effect for Android]]></title>
+    <link href="http://michaelevans.org/blog/2014/07/09/blurred-background-effect-for-android/"/>
+    <updated>2014-07-09T23:04:46-04:00</updated>
+    <id>http://michaelevans.org/blog/2014/07/09/blurred-background-effect-for-android</id>
+    <content type="html"><![CDATA[<p>A few months ago, the Android design team reviewed apps that they thought were good-looking, and were referred to as the &ldquo;<a href="https://play.google.com/store/apps/collection/promotion_3000235_beautiful_apps?hl=en">Beautiful Design Collection</a>&rdquo;, as part of their <a href="https://www.youtube.com/playlist?list=PLWz5rJ2EKKc8j2B95zGMb8muZvrIy-wcF">Android Design in Action</a> series.</p>
+
+<p>One of these apps was <a href="https://play.google.com/store/apps/details?id=com.etsy.android&amp;hl=en">Etsy</a>, which had a very cool fading blur background effect, which you can see here:</p>
+
+<p><img class="center" src="http://michaelevans.org/images/2014/07/09/2014-07-09-23_25_40.gif" width="600" height="600" title="Etsy Example" ></p>
+
+<p>As a learning experiment, I set off to replicate this behavior. I had seen a library by Manuel Peinado called <a href="https://github.com/ManuelPeinado/GlassActionBar">GlassActionBar</a> which demonstrated a similar glass-like blur effect on the ActionBar, so I decided to use that code for blurring my background.</p>
+
+<p>The code itself is pretty interesting, specifically the bit for versions on Jelly Bean or higher. If you&rsquo;re using API version 16 and up, you can use <a href="http://android-developers.blogspot.com/2013/08/renderscript-intrinsics.html">Renderscript Intrinsics</a>, which are a set of built-in functions that require very little code to use, but are optimized for high-performance.</p>
+
+<p>In my sample tests, using Renderscript to blur the image took on average about ~175ms, vs ~2 seconds doing the blur using Java code. (The required code is also only a tiny fraction of the length of the Renderscript one).</p>
+
+<p>Renderscript is extremely easy to add to your project, just throw</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>    renderscriptTargetApi 19
+</span><span class='line'>    renderscriptSupportMode true</span></code></pre></td></tr></table></div></figure>
+
+
+<p>in your <code>build.gradle</code> and you should be ready to roll.</p>
+
+<p>Once you have the blurring, the rest of the process is fairly straight forward. When you plan to leave an activity, create a bitmap of the current view and write it to disk. When you start your new activity (which should have a transparent background), you override the transition (otherwise you&rsquo;ll get the default zoom), and set the background to the blurred image you saved earlier. Add a fade in for the alpha and you get a nice little effect!</p>
+
+<p><img class="center" src="http://michaelevans.org/images/2014/07/09/2014-07-09-23_34_05.gif" width="600" height="600" title="My Example" ></p>
+
+<p>If you&rsquo;d like to see how this looks in a sample project, you can find it on Github <a href="https://github.com/MichaelEvans/EtsyBlurExample">here</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Building OBS Studio for OS X]]></title>
@@ -1638,60 +1673,6 @@ Liquid::Template.register_tag(&#39;google_plus&#39;, Jekyll::GooglePlusEmbedTag)
 <p><img class="center" src="http://michaelevans.org/images/2013/02/20/glass.jpg" width="400" height="400" title="Project Glass" ></p>
 
 <p>And the best part is the prize for the winners &ndash; a free Glass Explorer device (when they are available, of course).</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Boot Ubuntu from an SD Card on your Macbook Air (or Pro)]]></title>
-    <link href="http://michaelevans.org/blog/2013/01/15/boot-ubuntu-from-an-sd-card-on-your-macbook-air/"/>
-    <updated>2013-01-15T22:26:00-05:00</updated>
-    <id>http://michaelevans.org/blog/2013/01/15/boot-ubuntu-from-an-sd-card-on-your-macbook-air</id>
-    <content type="html"><![CDATA[<p>Recently I was trying to find a way to run Ubuntu off an SD card, so that I could use Linux on my Macbook Air (I&rsquo;d have dual booted, but my Air has the 128GB SSD, which doesn&rsquo;t leave much space after partitioning). Scouring the web, there&rsquo;s not that many resources indicating how, or if this is even possible. Fortunately for you, dear reader, it is!</p>
-
-<p>Like I said, I&rsquo;m using a Macbook Air, so there&rsquo;s two steps to this process: creating a bootable flash drive with the Ubuntu image, and the actual installation.</p>
-
-<!-- more -->
-
-
-<h3>Creating a bootable install image</h3>
-
-<p>This is pretty standard stuff, if you&rsquo;re reading this, it&rsquo;s likely you already know it. Heck, if you have an external DVD drive, you can skip this all together.</p>
-
-<ol>
-<li>Download the image from <a href="http://www.ubuntu.com/">Ubuntu</a></li>
-<li>Hit up your terminal and use the following command to convert that image <code>hdiutil convert -format UDRW -o ~/path/to/target.img ~/path/to/ubuntu.iso</code></li>
-<li>More terminal goodness: <code>diskutil list</code> to find which disk is your flash drive</li>
-<li><code>diskutil unmountDisk /dev/diskN</code> where N is the disk number you found in step 3.</li>
-<li><code>sudo dd if=/path/to/converted.img of=/dev/diskN bs=1m</code> to copy that image over to the flash drive.</li>
-<li><code>diskutil eject /dev/diskN</code> to EJECT!</li>
-</ol>
-
-
-<h3>Setup the SD Card</h3>
-
-<p>Now we&rsquo;re ready to install Ubuntu on the SD card (SD card must be at least 8 Gigs). I used a Class 10 card, and performance was…not terrible. I can&rsquo;t speak for any of the slower cards.</p>
-
-<ol>
-<li>Download rEFIt from the <a href="http://refit.sourceforge.net/">rEFIt website</a>. You should grab the .dmg version)</li>
-<li>Open up Disk Utility (in /Applications/Utilities) and create a partition of 50 MB formatted &ldquo;Mac OS Extended Journaled&rdquo;</li>
-<li>Fill up the rest of the card with a partition of MSDOS-FAT.</li>
-<li>Before writing the Partition Table, hit the options button and select &ldquo;GUID Partition Table&rdquo;</li>
-<li>Copy the &lsquo;efi&rsquo; directory onto the root of the 50MB partition created in step 2.</li>
-<li>Get back to that trusty terminal <code>cd /Volumes/partition1/efi/refit</code> (where &lsquo;partition1&rsquo; is the name of that same parition) followed by <code>./enable.sh</code></li>
-<li>Reboot your machine, and press and hold the option key to select a boot device. You should see ones for your main HD, the SD card, and the Live CD image. Select the Live CD image, and let&rsquo;s get installing.</li>
-<li>During installation, you&rsquo;ll want to select the advanced partitioning setup. Select the /dev/sdb3 device (Should match the size of the SD card) for formatting and give them the mount point &ldquo;/&rdquo;. Device for boot loader installation must be also /dev/sdb3 (not /dev/sdb!). Ubuntu is going to give you a warning about no swap partition. That&rsquo;s alright, you don&rsquo;t need it.</li>
-<li>This is going to take a while. Seriously, it&rsquo;s not gonna be fast. Go get a coffee.</li>
-<li>Reboot when the install is complete, and hold option again to select that SD card. <em>Ta-da</em>!</li>
-</ol>
-
-
-<h5>Bonus Step:</h5>
-
-<p>After you remove the SD card and try to boot normally, you&rsquo;ll likely hit this error &ldquo;grub error: no such device&rdquo;</p>
-
-<p>You can fix this by booting into OS X and selecting your hard drive as the Startup Disk, which can be found in the System Preferences.</p>
-
-<p><strong>Did you find this useful? Feel free to comment below, or follow me on <a href="http://www.twitter.com/m_evans10">Twitter</a> and let me know if you have any questions, or would like to suggest things for me to talk in the future.</strong></p>
 ]]></content>
   </entry>
   
