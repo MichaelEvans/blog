@@ -4,7 +4,7 @@
   <title><![CDATA[Gadget Habit]]></title>
   <link href="http://michaelevans.org/atom.xml" rel="self"/>
   <link href="http://michaelevans.org/"/>
-  <updated>2014-07-09T23:46:20-04:00</updated>
+  <updated>2015-05-07T20:34:02-04:00</updated>
   <id>http://michaelevans.org/</id>
   <author>
     <name><![CDATA[Michael Evans]]></name>
@@ -12,6 +12,73 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Android Ripples with Rounded Corners]]></title>
+    <link href="http://michaelevans.org/blog/2015/05/07/android-ripples-with-rounded-corners/"/>
+    <updated>2015-05-07T22:55:36-04:00</updated>
+    <id>http://michaelevans.org/blog/2015/05/07/android-ripples-with-rounded-corners</id>
+    <content type="html"><![CDATA[<p>So recently I was trying to add a ripple to a view that had rounded corners. Simple enough right? Let&rsquo;s just say I have a FrameLayout with the background similar to this one:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+</span><span class='line'>&lt;shape xmlns:android="http://schemas.android.com/apk/res/android"
+</span><span class='line'>    android:shape="rectangle"&gt;
+</span><span class='line'>    &lt;solid android:color="@android:color/transparent"/&gt;
+</span><span class='line'>    &lt;corners android:radius="15dp" /&gt;
+</span><span class='line'>    &lt;stroke
+</span><span class='line'>        android:width="1px"
+</span><span class='line'>        android:color="#000000" /&gt;
+</span><span class='line'>&lt;/shape&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It&rsquo;s not quite as simple as setting the foreground to <code>?attr/selectableItemBackground</code>, or else you&rsquo;ll see the ripple surpasses the corners (which doesn&rsquo;t look <em>so</em> bad when your border radius is small, but this would look terrible with a circlular view):</p>
+
+<p><img class="center" src="http://michaelevans.org/images/2015/05/07/before.gif" width="600" height="600" title="Rounded Corner Fail!" ></p>
+
+<p>The solution for this lies in the special mask layer of the <a href="https://developer.android.com/reference/android/graphics/drawable/RippleDrawable.html">RippleDrawable</a>. You specify the mask layer via the <code>android:id</code> value set to <code>@android:id/mask</code>. For the example above, you can set the mask to the same size/shape as the view you&rsquo;re masking, and then the ripple will only show for that area. For something like our example above, you&rsquo;d use something like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+</span><span class='line'>&lt;ripple xmlns:android="http://schemas.android.com/apk/res/android"
+</span><span class='line'>    android:color="?android:attr/colorControlHighlight"&gt;
+</span><span class='line'>    &lt;item android:id="@android:id/mask"&gt;
+</span><span class='line'>        &lt;shape android:shape="rectangle"&gt;
+</span><span class='line'>            &lt;solid android:color="#000000" /&gt;
+</span><span class='line'>            &lt;corners android:radius="15dp" /&gt;
+</span><span class='line'>        &lt;/shape&gt;
+</span><span class='line'>    &lt;/item&gt;
+</span><span class='line'>    &lt;item android:drawable="@drawable/rounded_corners" /&gt;
+</span><span class='line'>&lt;/ripple&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when you tap on the view, you&rsquo;ll see something like this:</p>
+
+<p><img class="center" src="http://michaelevans.org/images/2015/05/07/after.gif" width="600" height="600" title="Rounded Corners!" ></p>
+
+<p><em>Huzzah!</em></p>
+
+<p>Another tip: if you don&rsquo;t set a click listener for a FrameLayout (like we used in this example), the pressed state will never be used!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Blurred background effect for Android]]></title>
@@ -1653,26 +1720,6 @@ Liquid::Template.register_tag(&#39;google_plus&#39;, Jekyll::GooglePlusEmbedTag)
 <hr />
 
 <p>Anything I missed? Something you&rsquo;re excited about? Leave a comment!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Google's Project Glass]]></title>
-    <link href="http://michaelevans.org/blog/2013/02/20/googles-project-glass/"/>
-    <updated>2013-02-20T20:55:00-05:00</updated>
-    <id>http://michaelevans.org/blog/2013/02/20/googles-project-glass</id>
-    <content type="html"><![CDATA[<p>This morning Google put up some new details regarding Project Glass, including <a href="http://www.google.com/glass/start/how-it-feels/">a video</a> showing what it&rsquo;s like to wear Glass, and a <a href="http://www.google.com/glass/start/what-it-does/">list of things</a> that Glass can do. They are also sponsoring a new contest where anyone can <a href="http://www.google.com/glass/start/how-to-get-one/">join the Glass Explorers</a> (people who will be getting the Developer Edition). I was fortunate enough to be able to attend the Glass Foundry event in New York earlier this month, and got to experience Project Glass first hand. While I cannot say too much more than what you can gather from the Google page, I do have some exciting news!</p>
-
-<!-- more -->
-
-
-<p></p>
-
-<p>Me (and my team, which included Jacob Hilker and Ryan Warner), won the Glass Foundry Hackathon! Like I said, I cannot share much more about it, but I do have this sweet picture of me wearing them:</p>
-
-<p><img class="center" src="http://michaelevans.org/images/2013/02/20/glass.jpg" width="400" height="400" title="Project Glass" ></p>
-
-<p>And the best part is the prize for the winners &ndash; a free Glass Explorer device (when they are available, of course).</p>
 ]]></content>
   </entry>
   
