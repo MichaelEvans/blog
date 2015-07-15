@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Development | Gadget Habit]]></title>
   <link href="http://michaelevans.org/blog/categories/development/atom.xml" rel="self"/>
   <link href="http://michaelevans.org/"/>
-  <updated>2015-05-07T20:34:02-04:00</updated>
+  <updated>2015-07-14T23:59:18-04:00</updated>
   <id>http://michaelevans.org/</id>
   <author>
     <name><![CDATA[Michael Evans]]></name>
@@ -12,6 +12,82 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Improving your code with Android Support Annotations]]></title>
+    <link href="http://michaelevans.org/blog/2015/07/14/improving-your-code-with-android-support-annotations/"/>
+    <updated>2015-07-14T22:46:56-04:00</updated>
+    <id>http://michaelevans.org/blog/2015/07/14/improving-your-code-with-android-support-annotations</id>
+    <content type="html"><![CDATA[<p>If you haven&rsquo;t heard of the Android Support Annotations library yet, you&rsquo;re missing out on a neat new package that will help you catch bugs in your apps. Included in the library is a number of Java annotations, that will help Android Studio check your code for possible errors and report them to you. There are quite a few of them, so I only plan to go over a few of them here, but you should definitely <a href="http://tools.android.com/tech-docs/support-annotations">check out the docs</a> for more info about the rest.</p>
+
+<h2>@NonNull / @Nullable</h2>
+
+<p><code>@NonNull</code> and <code>@Nullable</code> are probably the most basic of the support annotations, but also some of the most helpful! Annotate a parameter or method with either of these to denote if the parameter or method&rsquo;s return value can be null or not, and voila, now Android Studio can give us a nice warning that we&rsquo;re doing something unsafe.</p>
+
+<!-- more -->
+
+
+<p>Turn this:</p>
+
+<p><img class="center" src="/images/2015/07/14/no-annotations.png" width="600" height="300" title="Method with no annotations" ></p>
+
+<p>into this:</p>
+
+<p><img class="center" src="/images/2015/07/14/nonnull.png" width="600" height="250" title="with @NonNull" ></p>
+
+<p>Bonus points: We can even take this example one step further with the <code>@CheckResult</code> annotation, to tell us know that the return type of this method is something that we are expected to use, rather than the method having a side effect.</p>
+
+<p><img class="center" src="/images/2015/07/14/checkreturn.png" width="600" height="300" title="Check that return type!" ></p>
+
+<h2>@StringRes / @DrawableRes / etc.</h2>
+
+<p>Have you ever attempted to call <code>setText</code> on a TextView, and gotten a somewhat mysterious <code>android.content.res.Resources$NotFoundException: String resource ID #0x3039</code> exception? If you pass an integer to setText, TextView assumes it&rsquo;s a String resource id, and will look it up in order to set the text. If only there were a way to denote that integers are not valid ids for this method&hellip;<code>@StringRes</code> to the rescue!</p>
+
+<p>```
+public void setText(@StringRes int id) {</p>
+
+<pre><code>// Do something like getString(id), etc.
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now if you try to pass a non-String resource id to this method, you get something like this:</p>
+
+<p><img class="center" src="/images/2015/07/14/stringres.png" width="500" height="200" title="Method takes a @StringRes id, not an int" ></p>
+
+<p>(There are resouce annotations for all resoruce types, <code>@DrawableRes</code>, <code>@ColorRes</code>, <code>@InterpolatorRes</code>, etc.)</p>
+
+<h2>@Keep</h2>
+
+<p>Today I discovered a new support annotation <code>@Keep</code>. According to the support annotation docs, this annotation hasn&rsquo;t been hooked up to the Gradle plugin yet<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>, but it will let you annotate methods and classes that should be retained when minimizing the app.</p>
+
+<p>If you&rsquo;ve ever messed around with the cryptic <code>-keep class com.foo.bar { public static &lt;methods&gt; }</code> incantations that you need to use to summon the Proguard Gods, you&rsquo;ll know how painful it is to rip your hair out, while trying to exclude a particular method or class from being optimized away. This handy annotation will tell Proguard to leave the method or class alone &ndash; like so:</p>
+
+<p>```
+public class Example {</p>
+
+<pre><code>@Keep
+public void doSomething() {
+    // hopefully this method does something
+}
+...
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The best part is &ndash; if you&rsquo;re using <code>appcompat-v7</code>, you&rsquo;re already including <code>support-annotations</code>, so just start using them already!</p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p><a href="https://android-review.googlesource.com/#/c/152983/">Looks like this is merged</a> into the 1.3 version of the plugin<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Android Ripples with Rounded Corners]]></title>
@@ -198,268 +274,6 @@ to set the background color to fade to, and which side gets the gradient.</li>
 <p>In addition to paricipating from your computer, Google has also launched an <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.helpouts">Android app</a> so that you can get help while you&rsquo;re mobile as well. Whether you&rsquo;re interested in giving Helpouts a shot, want to learn about writing apps for Android, or just want to see what the newest Google product looks like &ndash; feel free to checkout <a href="https://helpouts.google.com/114052868601022948953/ls/a65184ab017ae8b0">my listing!</a>.</p>
 
 <p><img class="center" src="/images/2013/11/05/waiting.png" width="600" height="600" title="Waiting" ></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Parse Android To-do App Tutorial - Part Two - Users]]></title>
-    <link href="http://michaelevans.org/blog/2013/08/20/parse-android-todo-app-tutorial-part-two-users/"/>
-    <updated>2013-08-20T21:13:00-04:00</updated>
-    <id>http://michaelevans.org/blog/2013/08/20/parse-android-todo-app-tutorial-part-two-users</id>
-    <content type="html"><![CDATA[<p>Last week <a href="http://michaelevans.org/blog/2013/08/14/tutorial-building-an-android-to-do-list-app-using-parse/">I posted a tutorial</a> on how to create a really basic Android To-do list application using <a href="http://www.parse.com">Parse</a>. It allowed a user to create tasks, and then toggle their completion status. Then, this information was synced to a server, so that the tasks will be kept up to date on multiple devices. The biggest issue with this app so far, was that there was no concept of users, so all tasks were shared among everyone. This week, we&rsquo;re going to introduce two new screens (which are very similar to one another), the registration and login screens.</p>
-
-<!-- more -->
-
-
-<h3>The Setup</h3>
-
-<p>The first thing we&rsquo;re have to do is two create two new activities, as I mentioned before. I called these <code>LoginActivity</code> and <code>RegisterActivity</code>. For simplicity sake, I&rsquo;ll assume that you used the New Activity Wizard, like we did last week to create the TodoActivity. You can also try the &ldquo;LoginActivity&rdquo; template from the wizard, but we&rsquo;ll skip that for this tutorial.</p>
-
-<h3>Let&rsquo;s Code</h3>
-
-<p>Once you have both those activities set up, let&rsquo;s fill up their layouts. We need to add the following items to these layouts: two <code>EditText</code> fields for a username and password, two <code>TextViews</code> to be the labels for these inputs, and two <code>Buttons</code>, one to sign in/sign up, and one to switch from the sign up to sign in screen and vice versa.</p>
-
-<p>Here&rsquo;s what my registration layout looks like:</p>
-
-<p>``` xml
-&lt;LinearLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
-
-<pre><code>xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical"
-android:paddingBottom="@dimen/activity_vertical_margin"
-android:paddingLeft="@dimen/activity_horizontal_margin"
-android:paddingRight="@dimen/activity_horizontal_margin"
-android:paddingTop="@dimen/activity_vertical_margin"
-tools:context=".RegisterActivity" &gt;
-
-&lt;LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    android:gravity="center_vertical"
-    android:orientation="vertical" &gt;
-
-    &lt;TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/username" /&gt;
-
-    &lt;EditText
-        android:id="@+id/register_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text" &gt;
-
-        &lt;requestFocus /&gt;
-    &lt;/EditText&gt;
-
-    &lt;TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Password:" /&gt;
-
-    &lt;EditText
-        android:id="@+id/register_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword" /&gt;
-
-    &lt;Button
-        android:id="@+id/sign_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:onClick="register"
-        android:text="Sign Up" /&gt;
-&lt;/LinearLayout&gt;
-
-&lt;Button
-    android:id="@+id/signInButton"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textSize="17sp"
-    android:onClick="showLogin"
-    android:text="Already Have An Account? Log In!" /&gt;
-</code></pre>
-
-<p></LinearLayout>
-```</p>
-
-<p>The login screen is very similar to that of the registration screen, with the same widgets in the same places, just different ids and labels, so we&rsquo;re just going to go over the registration screen in this tutorial and leave the login screen up as an exercise to the reader. (The code will be available on <a href="https://github.com/MichaelEvans/Parse-Android-Todo">Github</a> if you get stuck). We&rsquo;re going to want to implement that <code>register</code> function in our RegisterActivity, so let&rsquo;s do that next.</p>
-
-<p><img class="center" src="/images/2013/08/20/login.png" width="300" height="500" title="Logging In" ></p>
-
-<p>After declaring and binding variables to the two <code>EditText</code> fields (we&rsquo;ll call those <code>mUsernameField</code> and <code>mPasswordField</code>), we create our register function:</p>
-
-<p>``` java
-public void register(final View v){</p>
-
-<pre><code>if(mUsernameField.getText().length() == 0 || mPasswordField.getText().length() == 0)
-    return;
-
-v.setEnabled(false);
-ParseUser user = new ParseUser();
-user.setUsername(mUsernameField.getText().toString());
-user.setPassword(mPasswordField.getText().toString());
-
-user.signUpInBackground(new SignUpCallback() {
-    @Override
-    public void done(ParseException e) {
-        if (e == null) {
-            Intent intent = new Intent(RegisterActivity.this, TodoActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            // Sign up didn't succeed. Look at the ParseException
-            // to figure out what went wrong
-            v.setEnabled(true);
-        }
-    }
-});
-</code></pre>
-
-<p>```</p>
-
-<p><img class="center" src="/images/2013/08/20/registering.png" width="300" height="500" title="Registering" ></p>
-
-<p>What' were doing here is a) bailing out early if the user fails to fill in one of the fields, b) disabling the button while the network request is running, so the user can&rsquo;t try to register multiple times by accident, c) creating a ParseUser object with the username and password from the <code>EditText</code> fields, and then calling <code>signUpInBackground</code>, with a callback which is run when the request is complete. If there is an error for any reason, we re-enable the registration button, so that the user can fix any issues and resubmit. (We&rsquo;ll get to error handling a little later.) If there isn&rsquo;t an error, we start the TodoActivity that we <a href="http://michaelevans.org/blog/2013/08/14/tutorial-building-an-android-to-do-list-app-using-parse/">created last week</a>.</p>
-
-<p>Huzzah! If you sign up, you now see a users table in your Parse console!</p>
-
-<p><img class="center" src="/images/2013/08/20/users.png" width="800" height="800" title="Users Console" ></p>
-
-<h3>Making Things Belong</h3>
-
-<p>Now we need to make some changes to the TodoActivity. The first thing we need to do is make the query that fetches the data only return Tasks where the user is the same as the logged in user. We can do that by adding the following line that will modify our ParseQuery:
-<code>java
-query.whereEqualTo("user", ParseUser.getCurrentUser());
-</code></p>
-
-<p>We also need to make the Tasks belong to a user where they are created, which we can do by adding the following two statements when we are creating our new Tasks (we&rsquo;re also going to add the setters and getter for the user object on the Task model):</p>
-
-<p><code>java
-t.setACL(new ParseACL(ParseUser.getCurrentUser()));
-t.setUser(ParseUser.getCurrentUser());
-</code></p>
-
-<p>These lines will make the Task only read/writeable by the owner, and set the user associated with them to the current user. Take a peek in your Parse console, and you&rsquo;ll see the Tasks now have an owner!</p>
-
-<p><img class="center" src="/images/2013/08/20/tasks.png" width="800" height="800" title="Tasks now belong!" ></p>
-
-<p>We also want to make it possible for a user to log out. We&rsquo;ll do this by providing an option in the action bar settings menu. We can do this by adding an entry in the <code>res/menu/todo.xml</code> file like the following:</p>
-
-<p>``` xml
-&lt;item</p>
-
-<pre><code>android:id="@+id/action_logout"
-android:orderInCategory="100"
-android:showAsAction="never"
-android:title="@string/action_logout"/&gt;
-</code></pre>
-
-<p>```</p>
-
-<p>Then all we need to do is wire up this action bar item. When options items are selected, there&rsquo;s a method that will be called in your activity named <code>onOptionsItemSelected</code>. We&rsquo;ll just fill this function out like this:</p>
-
-<p>``` java
-public boolean onOptionsItemSelected(MenuItem item) {</p>
-
-<pre><code>switch (item.getItemId()) {
-case R.id.action_logout: 
-    ParseUser.logOut();
-    Intent intent = new Intent(this, LoginActivity.class);
-    startActivity(intent);
-    finish();
-    return true; 
-} 
-return false; 
-</code></pre>
-
-<p>}
-<code>``
-If the user selects the logout option, call the</code>logout()` method, and then send them back to the login screen.</p>
-
-<p>The last thing we need to do in the TodoActivity is prevent a user from accessing this class while no one is logged in. We can do that back up in the <code>onCreate</code> method:</p>
-
-<p>``` java
-ParseUser currentUser = ParseUser.getCurrentUser();
-if(currentUser == null){</p>
-
-<pre><code>Intent intent = new Intent(this, LoginActivity.class);
-startActivity(intent);
-finish();
-</code></pre>
-
-<p>}
-```</p>
-
-<p>If there is no user currenty logged in, stop the TodoActivity, and forward us to the LoginActivity.</p>
-
-<h3>Error Handling</h3>
-
-<p>As I alluded to before, we&rsquo;re also going to want to add error handling. This way, if the user puts in bad credentials, or they try to register a username that&rsquo;s already taken, they&rsquo;ll get an informative error message. Let&rsquo;s do this by adding a <code>TextView</code> in our layout to display the message: (You&rsquo;ll also want to add a <code>colors.xml</code> file that will declare what <code>@color/red</code> is.)</p>
-
-<p>``` xml
-&lt;TextView</p>
-
-<pre><code>android:id="@+id/error_messages"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_gravity="center_horizontal"
-android:textColor="@color/red"
-android:textAppearance="?android:attr/textAppearanceMedium" /&gt;
-</code></pre>
-
-<p>```</p>
-
-<p>Then we&rsquo;ll bind a variable to that view, and add the following error handling to the else statement from our <code>signUpInBackground</code> call:</p>
-
-<p>``` java
-switch(e.getCode()){
-case ParseException.USERNAME_TAKEN:</p>
-
-<pre><code>mErrorField.setText("Sorry, this username has already been taken.");
-break;
-</code></pre>
-
-<p>case ParseException.USERNAME_MISSING:</p>
-
-<pre><code>mErrorField.setText("Sorry, you must supply a username to register.");
-break;
-</code></pre>
-
-<p>case ParseException.PASSWORD_MISSING:</p>
-
-<pre><code>mErrorField.setText("Sorry, you must supply a password to register.");
-break;
-</code></pre>
-
-<p>default:</p>
-
-<pre><code>mErrorField.setText(e.getLocalizedMessage());
-</code></pre>
-
-<p>}
-v.setEnabled(true);
-```</p>
-
-<p>This will set some nice messages that will explain what the error is, or fall back to the message that Parse sends us, if it&rsquo;s some other type of problem.</p>
-
-<p><img class="center" src="/images/2013/08/20/error_handling.png" width="300" height="500" title="Pretty Error Handling" ></p>
-
-<h3>Possibilities for Next Time</h3>
-
-<p>Next time we can take a look at adding some delete functionality, or maybe tabs for looking over completed/incomplete tasks. Another possiblity is adding social sign in, using Twitter and Facebook. Other suggestions are welcome!</p>
-
-<p><strong>You can find the source on Github <a href="https://github.com/MichaelEvans/Parse-Android-Todo">here</a>.</strong></p>
-
-<hr />
-
-<p>Like this post? Questions, concerns or mistakes? Any other Android tutorials you&rsquo;d like to hear about? Let me know on <a href="https://twitter.com/m_evans10">Twitter</a> or <a href="https://plus.google.com/114052868601022948953/posts">Google Plus</a>, or leave a comment below.</p>
 ]]></content>
   </entry>
   
