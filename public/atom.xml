@@ -4,7 +4,7 @@
   <title><![CDATA[Gadget Habit]]></title>
   <link href="http://michaelevans.org/atom.xml" rel="self"/>
   <link href="http://michaelevans.org/"/>
-  <updated>2015-07-14T23:59:18-04:00</updated>
+  <updated>2015-08-07T09:41:26-04:00</updated>
   <id>http://michaelevans.org/</id>
   <author>
     <name><![CDATA[Michael Evans]]></name>
@@ -12,6 +12,185 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using Espresso for Easy UI Testing]]></title>
+    <link href="http://michaelevans.org/blog/2015/08/03/using-espresso-for-easy-ui-testing/"/>
+    <updated>2015-08-03T22:16:49-04:00</updated>
+    <id>http://michaelevans.org/blog/2015/08/03/using-espresso-for-easy-ui-testing</id>
+    <content type="html"><![CDATA[<p>One thing that I notice when I talk to Android developers is that a lot of them don&rsquo;t put an emphasis on testing. They say that it&rsquo;s too hard to write them or that they are too hard to integrate and set up, or give a bunch of other reasons why they don&rsquo;t. But it&rsquo;s actually pretty simple to write <a href="https://code.google.com/p/android-test-kit/wiki/Espresso">Espresso</a> tests, and they really aren&rsquo;t that hard to integrate with your code base.</p>
+
+<!-- more -->
+
+
+<h2>Easy to write</h2>
+
+<p>Espresso tests are dead simple to write. They come in three parts.</p>
+
+<ol>
+<li>ViewMatchers &ndash; something to find the view to act upon/assert something about</li>
+<li>ViewActions &ndash; something to perform an action (type text, click a button)</li>
+<li>ViewAssertions &ndash; something to verify what you expect</li>
+</ol>
+
+
+<p>For example, the following test would type the name &ldquo;Steve&rdquo; into an EditText with the id <code>name_field</code>, click a Button with the id <code>greet_button</code> and then verify that the text &ldquo;Hello Steve!&rdquo; appears on the screen:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Test</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSayHello</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">onView</span><span class="o">(</span><span class="n">withId</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">name_field</span><span class="o">)).</span><span class="na">perform</span><span class="o">(</span><span class="n">typeText</span><span class="o">(</span><span class="s">&quot;Steve&quot;</span><span class="o">));</span>
+</span><span class='line'>  <span class="n">onView</span><span class="o">(</span><span class="n">withId</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">greet_button</span><span class="o">)).</span><span class="na">perform</span><span class="o">(</span><span class="n">click</span><span class="o">());</span>
+</span><span class='line'>  <span class="n">onView</span><span class="o">(</span><span class="n">withText</span><span class="o">(</span><span class="s">&quot;Hello Steve!&quot;</span><span class="o">)).</span><span class="na">check</span><span class="o">(</span><span class="n">matches</span><span class="o">(</span><span class="n">isDisplayed</span><span class="o">()));</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Seems simple enough right? But what about when other threads are involved?</p>
+
+<h2>Integration</h2>
+
+<p>From the Espresso documentation:</p>
+
+<blockquote><p>The centerpiece of Espresso is its ability to seamlessly synchronize all test operations with the application under test. By default, Espresso waits for UI events in the current message queue to process and default AsyncTasks* to complete before it moves on to the next test operation. This should address the majority of application/test synchronization in your application.&#8221;</p></blockquote>
+
+
+<p>But if you&rsquo;re like me, you&rsquo;re not writing AsyncTasks to handle your background operations. My go-to tool for making HTTP requests (probably one of the most common uses of AsyncTask) is <a href="http://square.github.io/retrofit/">Retrofit</a>. So what can we do? Espresso has an API called <code>registerIdlingResource</code>, which allows you to synchronize your custom logic with Espresso.</p>
+
+<p>With this knowledge, one way you might approach this is to implement a mock version of your Retrofit interface, and then use something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MockApiService</span> <span class="kd">implements</span> <span class="n">ApiService</span><span class="o">,</span> <span class="n">IdlingResource</span> <span class="o">{</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">ApiService</span> <span class="n">api</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">AtomicInteger</span> <span class="n">counter</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceCallback</span><span class="o">&gt;</span> <span class="n">callbacks</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">MockApiService</span><span class="o">(</span><span class="n">ApiService</span> <span class="n">api</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">api</span> <span class="o">=</span> <span class="n">api</span><span class="o">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">callbacks</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span> 
+</span><span class='line'>      <span class="k">this</span><span class="o">.</span><span class="na">counter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicInteger</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Response</span> <span class="nf">doWork</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">counter</span><span class="o">.</span><span class="na">incrementAndGet</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nf">decrementAndNotify</span><span class="o">(</span><span class="n">api</span><span class="o">.</span><span class="na">doWork</span><span class="o">());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isIdleNow</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">counter</span><span class="o">.</span><span class="na">get</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerIdleTransitionCallback</span><span class="o">(</span><span class="n">ResourceCallback</span> <span class="n">resourceCallback</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">callbacks</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">resourceCallback</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">private</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="n">decrementAndNotify</span><span class="o">(</span><span class="n">T</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">counter</span><span class="o">.</span><span class="na">decrementAndGet</span><span class="o">();</span>
+</span><span class='line'>      <span class="n">notifyIdle</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">data</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">notifyIdle</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">counter</span><span class="o">.</span><span class="na">get</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">for</span> <span class="o">(</span><span class="n">ResourceCallback</span> <span class="n">cb</span> <span class="o">:</span> <span class="n">callbacks</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">cb</span><span class="o">.</span><span class="na">onTransitionToIdle</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This tells Espresso that your app is idle after the methods are called. But you should immediately see the problem here &ndash; you&rsquo;ll end up writing a TON of boilerplate. As you have more methods in your interface, and lot of repeated increment and decrement code&hellip;there must be a better way. (There is!)</p>
+
+<p>The &ldquo;trick&rdquo; lies right in the selling point in the Espresso documentation, &ldquo;Espresso waits for UI events&hellip; and default <em><strong>AsyncTasks</strong></em> to complete&rdquo;. If we could somehow execute our Retrofit requests on the AsyncTasks&#8217; ThreadPoolExecutor, we&rsquo;d get sychronization for free!</p>
+
+<p>Fortunately, Retrofit&rsquo;s <code>RestAdapter.Builder</code> class has just such a method!</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">new</span> <span class="n">RestAdapter</span><span class="o">.</span><span class="na">Builder</span><span class="o">()</span>
+</span><span class='line'>   <span class="o">.</span><span class="na">setExecutors</span><span class="o">(</span><span class="n">AsyncTask</span><span class="o">.</span><span class="na">THREAD_POOL_EXECUTOR</span><span class="o">,</span> <span class="k">new</span> <span class="n">MainThreadExecutor</span><span class="o">())</span>
+</span><span class='line'>   <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And it&rsquo;s that simple &ndash; Now you have no excuse not to write some Espresso tests!</p>
+
+<h4>More Resources</h4>
+
+<ul>
+<li><a href="https://code.google.com/p/android-test-kit/wiki/EspressoV2CheatSheet">The Espresso V2 Cheatsheet</a></li>
+<li><a href="http://blog.sqisland.com/2015/04/espresso-custom-idling-resource.html">Read more about writing custom idling resources</a></li>
+</ul>
+
+
+<p>Thanks to <a href="https://twitter.com/queencodemonkey">Huyen Tue Dao</a> for editing this post!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Improving your code with Android Support Annotations]]></title>
@@ -1706,40 +1885,6 @@ Liquid::Template.register_tag(&#39;google_plus&#39;, Jekyll::GooglePlusEmbedTag)
 <hr />
 
 <p>Suggestions for a new RSS reader? Predictions for IO 2013? Drop me a line on <a href="https://twitter.com/m_evans10">Twitter</a> or <a href="https://plus.google.com/114052868601022948953/posts">Google Plus</a>, or leave a comment.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Guide to Google Authorship]]></title>
-    <link href="http://michaelevans.org/blog/2013/02/25/guide-to-google-authorship/"/>
-    <updated>2013-02-25T21:22:00-05:00</updated>
-    <id>http://michaelevans.org/blog/2013/02/25/guide-to-google-authorship</id>
-    <content type="html"><![CDATA[<p>Today I noticed something interesting about my blog: I&rsquo;m now a verified author! What does that mean, you might ask? When one of the pages of my blog shows up in a Google search, it will look a little something like this:</p>
-
-<p><img class="center" src="http://michaelevans.org/images/2013/02/25/authorship.png" width="600" height="400" title="Google Authorship" ></p>
-
-<!-- more -->
-
-
-<p>Why might you want Google Authorship?</p>
-
-<ul>
-<li>It helps distinguish your content from other search results.</li>
-<li>You might get more followers on Google+.</li>
-</ul>
-
-
-<p>Would you like to get Authorship on Google? It&rsquo;s actually extremely easy. Just follow the following steps:</p>
-
-<ol>
-<li>You need a Google+ profile with a profile picture of yourself.</li>
-<li>On the profile editor of Google+, there is a &ldquo;Contributor to&rdquo; section; add your website here.</li>
-<li>Add a link like this: <code>&lt;a href="[your profile URL]?rel=author"&gt;Google&lt;/a&gt;</code> somewhere on your website.</li>
-<li>You&rsquo;re done! You can validate what your site would look like as a search result with a tool found <a href="http://www.google.com/webmasters/tools/richsnippets">here</a>.</li>
-</ol>
-
-
-<p>Keep in mind that Google doesn&rsquo;t <em>guarantee</em> to show author information in Google Web Search or Google News results.</p>
 ]]></content>
   </entry>
   

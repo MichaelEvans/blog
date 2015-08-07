@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Android | Gadget Habit]]></title>
   <link href="http://michaelevans.org/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://michaelevans.org/"/>
-  <updated>2015-07-14T23:59:18-04:00</updated>
+  <updated>2015-08-07T09:41:26-04:00</updated>
   <id>http://michaelevans.org/</id>
   <author>
     <name><![CDATA[Michael Evans]]></name>
@@ -12,6 +12,128 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using Espresso for Easy UI Testing]]></title>
+    <link href="http://michaelevans.org/blog/2015/08/03/using-espresso-for-easy-ui-testing/"/>
+    <updated>2015-08-03T22:16:49-04:00</updated>
+    <id>http://michaelevans.org/blog/2015/08/03/using-espresso-for-easy-ui-testing</id>
+    <content type="html"><![CDATA[<p>One thing that I notice when I talk to Android developers is that a lot of them don&rsquo;t put an emphasis on testing. They say that it&rsquo;s too hard to write them or that they are too hard to integrate and set up, or give a bunch of other reasons why they don&rsquo;t. But it&rsquo;s actually pretty simple to write <a href="https://code.google.com/p/android-test-kit/wiki/Espresso">Espresso</a> tests, and they really aren&rsquo;t that hard to integrate with your code base.</p>
+
+<!-- more -->
+
+
+<h2>Easy to write</h2>
+
+<p>Espresso tests are dead simple to write. They come in three parts.</p>
+
+<ol>
+<li>ViewMatchers &ndash; something to find the view to act upon/assert something about</li>
+<li>ViewActions &ndash; something to perform an action (type text, click a button)</li>
+<li>ViewAssertions &ndash; something to verify what you expect</li>
+</ol>
+
+
+<p>For example, the following test would type the name &ldquo;Steve&rdquo; into an EditText with the id <code>name_field</code>, click a Button with the id <code>greet_button</code> and then verify that the text &ldquo;Hello Steve!&rdquo; appears on the screen:</p>
+
+<p><code>java
+@Test
+public void testSayHello() {
+  onView(withId(R.id.name_field)).perform(typeText("Steve"));
+  onView(withId(R.id.greet_button)).perform(click());
+  onView(withText("Hello Steve!")).check(matches(isDisplayed()));
+}
+</code></p>
+
+<p>Seems simple enough right? But what about when other threads are involved?</p>
+
+<h2>Integration</h2>
+
+<p>From the Espresso documentation:</p>
+
+<p><blockquote><p>The centerpiece of Espresso is its ability to seamlessly synchronize all test operations with the application under test. By default, Espresso waits for UI events in the current message queue to process and default AsyncTasks* to complete before it moves on to the next test operation. This should address the majority of application/test synchronization in your application.&ldquo;</p></blockquote></p>
+
+<p>But if you&rsquo;re like me, you&rsquo;re not writing AsyncTasks to handle your background operations. My go-to tool for making HTTP requests (probably one of the most common uses of AsyncTask) is <a href="http://square.github.io/retrofit/">Retrofit</a>. So what can we do? Espresso has an API called <code>registerIdlingResource</code>, which allows you to synchronize your custom logic with Espresso.</p>
+
+<p>With this knowledge, one way you might approach this is to implement a mock version of your Retrofit interface, and then use something like this:</p>
+
+<p>```java
+public class MockApiService implements ApiService, IdlingResource {</p>
+
+<pre><code>private final ApiService api;
+private final AtomicInteger counter;
+private final List&lt;ResourceCallback&gt; callbacks;
+
+public MockApiService(ApiService api) {
+    this.api = api;
+    this.callbacks = new ArrayList&lt;&gt;(); 
+    this.counter = new AtomicInteger(0);
+}
+
+@Override
+public Response doWork() {
+    counter.incrementAndGet();
+    return decrementAndNotify(api.doWork());
+}
+
+@Override
+public String getName() {
+    return this.getClass().getName();
+}
+
+@Override
+public boolean isIdleNow() {
+    return counter.get() == 0;
+}
+
+@Override
+public void registerIdleTransitionCallback(ResourceCallback resourceCallback) {
+    callbacks.add(resourceCallback);
+}
+
+private &lt;T&gt; T decrementAndNotify(T data) {
+    counter.decrementAndGet();
+    notifyIdle();
+    return data;
+}
+
+private void notifyIdle() {
+    if (counter.get() == 0) {
+        for (ResourceCallback cb : callbacks) {
+            cb.onTransitionToIdle();
+        }
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>This tells Espresso that your app is idle after the methods are called. But you should immediately see the problem here &ndash; you&rsquo;ll end up writing a TON of boilerplate. As you have more methods in your interface, and lot of repeated increment and decrement code&hellip;there must be a better way. (There is!)</p>
+
+<p>The &ldquo;trick&rdquo; lies right in the selling point in the Espresso documentation, &ldquo;Espresso waits for UI events&hellip; and default <em><strong>AsyncTasks</strong></em> to complete&rdquo;. If we could somehow execute our Retrofit requests on the AsyncTasks' ThreadPoolExecutor, we&rsquo;d get sychronization for free!</p>
+
+<p>Fortunately, Retrofit&rsquo;s <code>RestAdapter.Builder</code> class has just such a method!</p>
+
+<p><code>java
+new RestAdapter.Builder()
+   .setExecutors(AsyncTask.THREAD_POOL_EXECUTOR, new MainThreadExecutor())
+   .build();
+</code></p>
+
+<p>And it&rsquo;s that simple &ndash; Now you have no excuse not to write some Espresso tests!</p>
+
+<h4>More Resources</h4>
+
+<ul>
+<li><a href="https://code.google.com/p/android-test-kit/wiki/EspressoV2CheatSheet">The Espresso V2 Cheatsheet</a></li>
+<li><a href="http://blog.sqisland.com/2015/04/espresso-custom-idling-resource.html">Read more about writing custom idling resources</a></li>
+</ul>
+
+
+<p>Thanks to <a href="https://twitter.com/queencodemonkey">Huyen Tue Dao</a> for editing this post!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Improving your code with Android Support Annotations]]></title>
@@ -240,61 +362,6 @@ to set the background color to fade to, and which side gets the gradient.</li>
 <hr />
 
 <p>Are you using this library in your app? Please let me know so I can add a link to it on the <a href="https://github.com/MichaelEvans/ColorArt">GitHub project page</a>! Also, feel free to send pull requests!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Using a ViewPager in a ScrollView]]></title>
-    <link href="http://michaelevans.org/blog/2013/10/13/using-a-viewpager-in-a-scrollview/"/>
-    <updated>2013-10-13T20:48:00-04:00</updated>
-    <id>http://michaelevans.org/blog/2013/10/13/using-a-viewpager-in-a-scrollview</id>
-    <content type="html"><![CDATA[<p>For a new app that I&rsquo;m working on, I wanted to use a ViewPager inside a ScrollView in order to make a simple image carousel. The only problem is, ScrollViews don&rsquo;t seem to play nicely with horizontally swiping Views. As soon as the user moves their finger even slightly up or down, the ViewPager page change is cancelled, and the page snaps back to the current item. This can lead to an extremely frustrating user experience, because it is difficult for the user to understand why the views won&rsquo;t swipe.</p>
-
-<!-- more -->
-
-
-<p>A popular solution that I&rsquo;ve seen online is to use the ViewPager&rsquo;s <code>getParent().requestDisallowInterceptTouchEvent(true);</code> method to prevent the ScrollView from scrolling while the ViewPager is being touched or scrolled. The solution that I&rsquo;ve been using is a bit like this, but it provides a little bit of a &ldquo;drag threshold&rdquo;, which is a bit forgiving in the event that the user is trying to drag the ScrollView, but happens to have their finger in the ViewPager. The code I used is as follows:</p>
-
-<p>``` java PagerTouchListener.java
-mPager.setOnTouchListener(new View.OnTouchListener() {</p>
-
-<pre><code>int dragthreshold = 30;
-int downX;
-int downY;
-
-@Override 
-public boolean onTouch(View v, MotionEvent event) {
-
-    switch (event.getAction()) {
-    case MotionEvent.ACTION_DOWN:
-        downX = (int) event.getRawX();
-        downY = (int) event.getRawY();
-        break; 
-    case MotionEvent.ACTION_MOVE:
-        int distanceX = Math.abs((int) event.getRawX() - downX);
-        int distanceY = Math.abs((int) event.getRawY() - downY);
-
-        if (distanceY &gt; distanceX &amp;&amp; distanceY &gt; dragthreshold) {
-            mPager.getParent().requestDisallowInterceptTouchEvent(false); 
-            mScrollView.getParent().requestDisallowInterceptTouchEvent(true); 
-        } else if (distanceX &gt; distanceY &amp;&amp; distanceX &gt; dragthreshold) {
-            mPager.getParent().requestDisallowInterceptTouchEvent(true); 
-            mScrollView.getParent().requestDisallowInterceptTouchEvent(false); 
-        } 
-        break; 
-    case MotionEvent.ACTION_UP:
-        mScrollView.getParent().requestDisallowInterceptTouchEvent(false); 
-        mPager.getParent().requestDisallowInterceptTouchEvent(false); 
-        break; 
-    } 
-    return false; 
-} 
-</code></pre>
-
-<p>});
-```</p>
-
-<p>I found this very useful solution on <a href="http://stackoverflow.com/questions/8381697/viewpager-inside-a-scrollview-does-not-scroll-correclty/16224484#16224484">StackOverflow</a>, among many other solutions that did work (although not as nicely as this one).</p>
 ]]></content>
   </entry>
   
