@@ -8,7 +8,9 @@ description: "Using Espresso for Easy UI Testing"
 keywords: "Android, Development"
 ---
 
-One thing that I notice when I talk to Android developers is that a lot of them don't put an emphasis on testing. They say it's too hard to write them, or they are too hard to integrate and set up, or a bunch of other reasons why they don't. But it's actually pretty simple to write [Espresso](https://code.google.com/p/android-test-kit/wiki/Espresso) tests, and they really aren't that hard to integrate with your code base.
+One thing that I notice when I talk to Android developers is that a lot of them don't put an emphasis on testing. They say that it's too hard to write them or that they are too hard to integrate and set up, or give a bunch of other reasons why they don't. But it's actually pretty simple to write [Espresso](https://code.google.com/p/android-test-kit/wiki/Espresso) tests, and they really aren't that hard to integrate with your code base.
+
+<!-- more -->
 
 ##Easy to write
 
@@ -33,11 +35,15 @@ Seems simple enough right? But what about when other threads are involved?
 
 ##Integration
 
-So the Espresso documentation says that "The centerpiece of Espresso is its ability to seamlessly synchronize all test operations with the application under test. By default, Espresso waits for UI events in the current message queue to process and default AsyncTasks* to complete before it moves on to the next test operation. This should address the majority of application/test synchronization in your application."
+From the Espresso documentation:
 
-But if you're like me, you're not writing AsyncTasks to handle your background operations. My go-to tool for making HTTP requests (probably on of the most common uses of AsyncTask) is [Retrofit](http://square.github.io/retrofit/). So what can we do? Espresso has an API called `registerIdlingResource`, which allows you to synchronize your custom logic up to Espresso. 
+{% blockquote %}
+The centerpiece of Espresso is its ability to seamlessly synchronize all test operations with the application under test. By default, Espresso waits for UI events in the current message queue to process and default AsyncTasks* to complete before it moves on to the next test operation. This should address the majority of application/test synchronization in your application."
+{% endblockquote %}
 
-With this knowledge, one way you might approach this is to implement a mock version of your retrofit interface, and then use something like this:
+But if you're like me, you're not writing AsyncTasks to handle your background operations. My go-to tool for making HTTP requests (probably one of the most common uses of AsyncTask) is [Retrofit](http://square.github.io/retrofit/). So what can we do? Espresso has an API called `registerIdlingResource`, which allows you to synchronize your custom logic with Espresso.
+
+With this knowledge, one way you might approach this is to implement a mock version of your Retrofit interface, and then use something like this:
 
 ```java
 public class MockApiService implements ApiService, IdlingResource {
@@ -90,11 +96,11 @@ public class MockApiService implements ApiService, IdlingResource {
 }
 ```
 
-to tell Espresso that your app is idle after the methods are called. But you should immediately see the problem here - you'll end up writing a TON of boilerplate, and as you have more methods in your interface, and lot of repeated increment and decrement code...there must be a better way. (There is!)
+This tells Espresso that your app is idle after the methods are called. But you should immediately see the problem here - you'll end up writing a TON of boilerplate. As you have more methods in your interface, and lot of repeated increment and decrement code...there must be a better way. (There is!)
 
 The "trick" lies right in the selling point in the Espresso documentation, "Espresso waits for UI events... and default _**AsyncTasks**_ to complete". If we could somehow execute our Retrofit requests on the AsyncTasks' ThreadPoolExecutor, we'd get sychronization for free!
 
-Fortunately, Retrofit's `RestAdapter.Builder` class has just such a method! Just 
+Fortunately, Retrofit's `RestAdapter.Builder` class has just such a method! 
 
 ```java
 new RestAdapter.Builder()
@@ -102,9 +108,11 @@ new RestAdapter.Builder()
    .build();
 ```
 
-and it's that simple - Now you have no excuse not to write some Espresso tests!
+And it's that simple - Now you have no excuse not to write some Espresso tests!
 
 ####More Resources
 
 - [The Espresso V2 Cheatsheet](https://code.google.com/p/android-test-kit/wiki/EspressoV2CheatSheet)
 - [Read more about writing custom idling resources](http://blog.sqisland.com/2015/04/espresso-custom-idling-resource.html)
+
+Thanks to [Huyen Tue Dao](https://twitter.com/queencodemonkey) for editing this post!
