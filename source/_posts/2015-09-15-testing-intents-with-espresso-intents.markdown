@@ -8,7 +8,7 @@ description: "Testing Intents with Espresso Intents"
 keywords: "Android, Development, Testing"
 ---
 
-A few weeks ago, I wrote [a basic introduction](http://michaelevans.org/blog/2015/08/03/using-espresso-for-easy-ui-testing/) on how to use Espresso to test the UI of an Android application. However, sometimes your app needs to use the Android intent system to call upon the dialer, or the browser, or pick a contact with the contact picker. Because these apps run outside your application's process, you can't use Espresso to interact with them. So how can you test your app's behavior? You can either use Espresso-Intents, or UI Automator (but that's another show).
+A few weeks ago, I wrote [a basic introduction](http://michaelevans.org/blog/2015/08/03/using-espresso-for-easy-ui-testing/) on how to use Espresso to test the UI of an Android application. However, when I went to write instrumentation tests for [Aftermath](https://github.com/MichaelEvans/Aftermath), I ran into trouble testing things that exist outside my application's process. For example, what do you do when your app needs to use the Android intent system to call upon the dialer, or the browser, or pick a contact with the contact picker? What about testing a share action? Because these apps run outside your application itself, you can't use Espresso to interact with them. So how can you test your app's behavior? You can either use Espresso-Intents, or UI Automator (but that's another show).
 
 <!-- more -->
 
@@ -71,7 +71,7 @@ All we have to do is use the `intended` API, which is most similar to Mockito's 
 
 In this case, we're just going to verify that the intended intent had the right action and the right data that we'd expect to hand off to the dialer.
 
-And you'll notice that the Espresso-Intents package include handy  Hamcrest matchers for all of the parts of the `Intent` class, so you can use any of the existing Hamcrest matchers for things like Strings on the different parts of the Intent. 
+And you'll notice that the Espresso-Intents package include handy Hamcrest matchers for all of the parts of the `Intent` class, so you can use any of the existing Hamcrest matchers for things like Strings on the different parts of the Intent. 
 
 Now go forth and test those inter-app component interactions!
 
