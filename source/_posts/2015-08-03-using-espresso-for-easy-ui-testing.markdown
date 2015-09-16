@@ -3,9 +3,9 @@ layout: post
 title: "Using Espresso for Easy UI Testing"
 date: 2015-08-03 22:16:49 -0400
 comments: true
-categories: [Android, Development, Code]
+categories: [Android, Development, Code, Testing]
 description: "Using Espresso for Easy UI Testing"
-keywords: "Android, Development"
+keywords: "Android, Development, Testing"
 ---
 
 One thing that I notice when I talk to Android developers is that a lot of them don't put an emphasis on testing. They say that it's too hard to write them or that they are too hard to integrate and set up, or give a bunch of other reasons why they don't. But it's actually pretty simple to write [Espresso](https://code.google.com/p/android-test-kit/wiki/Espresso) tests, and they really aren't that hard to integrate with your code base.
