@@ -16,6 +16,8 @@ I recently attended Google's [Android Dev Summit](https://androiddevsummit.withg
 
 Ever needed to type a JSON string? Perhaps you've used one as a text fixture for one of your GSON deserializers and know that it's a huge pain to manage all those backslashes. Fortunately, IntelliJ has a feature called *Language Injection*, which allows you to edit the JSON fragment in its own editor and then IntelliJ will properly inject that fragment into your code as an escaped String.
 
+{% img center /images/2016/01/06/fragment_intention.png 300 100 Intention Action %}
+
 Inject Language/Reference is an intention action[^1], so you can start it by using <kbd>⌥</kbd>+<kbd>Return</kbd>, or <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>A</kbd> and searching for it.
 
 {% img center /images/2016/01/06/fragment_editor.png 300 300 Editing JSON %}
@@ -52,7 +54,7 @@ Another really cool feature is the *Productivity Guide*. It shows you usage stat
 
 ##Bonus Round - IntelliJ 15 Only
 
-Did you know IntelliJ has [it's own REST client built in](https://www.jetbrains.com/idea/help/testing-restful-web-services.html)? Super handy for testing out API calls without something like [Paw](https://luckymarmot.com/paw) or [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en).
+Did you know IntelliJ has [its own REST client](https://www.jetbrains.com/idea/help/testing-restful-web-services.html)? Super handy for testing out API calls without something like [Paw](https://luckymarmot.com/paw) or [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en).
 
 Have any other favorite tips or tricks? Let me know!
 
