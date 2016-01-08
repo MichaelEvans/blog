@@ -8,13 +8,13 @@ description: "Android Studio Tips and Tricks"
 keywords: "Android, Development, Android Studio"
 ---
 
-I recently attended Google's [Android Dev Summit](https://androiddevsummit.withgoogle.com/) where the Tools team presented a talk entitled [Android Studio For Experts](https://www.youtube.com/watch?v=Y2GC6P5hPeA). The room was packed for the 90 minute session, where a lot of great Android Studio tips where shared. This gave me the idea of showing off some of my favorite Android Studio tips!
+I recently attended Google's [Android Dev Summit](https://androiddevsummit.withgoogle.com/) where the Tools team presented a talk entitled [Android Studio For Experts](https://www.youtube.com/watch?v=Y2GC6P5hPeA). The room was packed for the 90 minute session, where a lot of great Android Studio tips were shared. This gave me the idea of showing off some of my favorite Android Studio tips!
 
 <!-- more -->
 
 ## Language Injection
 
-Ever needed to type a JSON string? Perhaps you've used one as a text fixture for one of your GSON deserializers and know that it's a huge pain to manage all those backslashes. Fortunately, IntelliJ has a feature called *Language Injection*, which allows you to edit the JSON fragment in its own editor and then IntelliJ will properly inject that fragment into your code as an escaped String.
+Ever needed to type a JSON String? Perhaps you've used one as a text fixture for one of your GSON deserializers and know that it's a huge pain to manage all those backslashes. Fortunately, IntelliJ has a feature called *Language Injection*, which allows you to edit the JSON fragment in its own editor, and then IntelliJ will properly inject that fragment into your code as an escaped String.
 
 {% img center /images/2016/01/06/fragment_intention.png 300 100 Intention Action %}
 
@@ -38,7 +38,7 @@ Now I’m pretty sure most of you have used IntelliJ’s code completion feature
 
 {% img center /images/2016/01/06/basic_autocomplete.png 300 200 Autocomplete %}
 
-Well if you use *Type Completion* (by pressing <kbd>⌥</kbd>+<kbd>⇧</kbd>+<kbd>Space</kbd>), you will see a list of suggestions containing only those types that are applicable to the current context. Like the example below, you'll only get types that return a `Reader`, which is the type that BufferedReaders constructor expects:
+Well if you use *Type Completion* (by pressing <kbd>⌥</kbd>+<kbd>⇧</kbd>+<kbd>Space</kbd>), you will see a list of suggestions containing only those types that are applicable to the current context. In the example below, you'll only get types that return a `Reader`, which is the type that the `BufferedReader`'s constructor expects:
 
 {% img center /images/2016/01/06/smart_autocomplete.png 300 200 Better Autocomplete %}
 
@@ -48,7 +48,7 @@ What's even cooler is that you can press it an additional time, and IntelliJ wil
 
 ## Discovering Your Own Tips and Tricks
 
-Another really cool feature is the *Productivity Guide*. It shows you usage statistics for a lot of IntelliJ's features, like how many keystokes have been saved or possible bugs avoided by using the various shortcuts. It's also very helpful for discovering features you might not have known about; you can scroll through the list of unused features to see what you're missing out on! To find the productivity guide, go to `Help -> Productivity Guide`.
+Another really cool feature is the *Productivity Guide*. It shows you usage statistics for a lot of IntelliJ's features, such as how many keystokes you have saved or possible bugs you've avoided by using the various shortcuts. It's also very helpful for discovering features you might not have known about; you can scroll through the list of unused features to see what you're missing out on! To find the productivity guide, go to `Help -> Productivity Guide`.
 
 {% img center /images/2016/01/06/productivity_guide.png 700 500 Invalid Regex %}
 
