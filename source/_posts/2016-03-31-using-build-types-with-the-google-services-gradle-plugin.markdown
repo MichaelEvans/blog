@@ -8,19 +8,19 @@ description: "Using Build Types with the Google Services Gradle Plugin"
 keywords: "Android, Development"
 ---
 
-If you want to integrate your Android app with most of Google Play Services nowadays, you'll find that you are instructed to set up the [Google Services Gradle plugin](https://developers.google.com/android/guides/google-services-plugin) to handle configuring dependencies. The plugin allows you to drop a JSON file into your project, and then the plugin will do a bunch of the configuration for handling API keys, etc. for your project. 
+If you want to integrate your Android app with most of Google Play Services nowadays, you'll find that you are instructed to set up the [Google Services Gradle plugin](https://developers.google.com/android/guides/google-services-plugin) to handle configuring dependencies. The plugin allows you to drop a JSON file into your project, and then the plugin will do a bunch of the configuration for your project, such as handling the API keys. 
 
-This is all well and good, unless you're like me ([and countless others](https://github.com/googlesamples/google-services/issues/54)), who want to use a different configuration for your debug and release builds. This would be useful, as an example, if you use Google Play Services for GCM, and would like to have development builds recieve pushes from non-production systems.
+This is all well and good—unless you're like me ([and countless others](https://github.com/googlesamples/google-services/issues/54)) and want to use a different configuration for your debug and release builds. This would be useful, as an example, if you use Google Play Services for GCM and would like to have development builds recieve pushes from non-production systems.
 
-However, it seems that the plugin is configured in such a way that it supports build flavors, but does not yet support build types. However, with a little Gradle magic, we can hack that support in. 
+It seems that the plugin is configured in such a way that it supports build flavors, but it does not yet support build types. However, with a little Gradle magic, we can hack that support in. 
 
 <!-- more -->
 
-**Disclaimer: This approach worked for me - but as with any hack, it is subject to break.**
+**Disclaimer: This approach worked for me—but as with any hack, it is subject to break.**
 
-So how can we go about doing this? We want to put the debug JSON file into the root of our app module during debug builds, and use the release one for release builds. If you don't do that, or attempt to put it in `app/debug` and `app/release`, you'll get an error that says `File google-services.json is missing from module root folder. The Google Services Plugin cannot function without it`.
+So how can we go about doing this? We want to put the debug JSON file into the root of our app module during debug builds and use the release one for release builds. If you don't do that, or if you attempt to put it in `app/debug` and `app/release`, you'll get an error that says `File google-services.json is missing from module root folder. The Google Services Plugin cannot function without it`.
 
-This error is thrown by a task named `process{VariantName}GoogleServices`. So what we could do is swap the file in before that task is run! Using a little Groovy magic, I came up with this:
+This error is thrown by a task named `process{VariantName}GoogleServices`. What we could do to solve this is swap the file in before that task is run! Using a little Groovy magic, I came up with this:
 
 ```groovy
 android.applicationVariants.all { variant ->
