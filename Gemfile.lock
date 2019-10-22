@@ -13,7 +13,9 @@ GEM
     erubis (2.7.0)
     fast-stemmer (1.0.2)
     fssm (0.2.10)
-    haml (3.1.8)
+    haml (5.0.0)
+      temple (>= 0.8.0)
+      tilt
     jekyll (0.12.1)
       classifier (~> 1.3)
       directory_watcher (~> 1.1)
@@ -47,6 +49,7 @@ GEM
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
     stringex (1.4.0)
+    temple (0.8.2)
     tilt (2.0.2)
     unicorn (5.0.1)
       kgio (~> 2.6)
@@ -62,7 +65,7 @@ DEPENDENCIES
   compass (~> 0.12.2)
   directory_watcher (= 1.4.1)
   erubis
-  haml (~> 3.1.7)
+  haml (~> 5.0.0)
   jekyll (~> 0.12)
   liquid (~> 2.3.0)
   mini_magick
